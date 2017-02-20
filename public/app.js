@@ -1,30 +1,52 @@
 // Grab the articles as a json
 $.getJSON("/articles", function(data) {
   // For each one
+
   for (var i = 0; i < data.length; i++) {
     // Display the apropos information on the page
 
-    $("#articles").append("<p>" + "<a href= '" + data[i].link +"'>" + data[i].title + "</a>");
+    $("#articles").append("<p><h2>" + "<a href= '" + data[i].link +"'>" + data[i].title + "</a></h2>");
     $("#articles").append("<button id='addnote' type='button'" + "data-id='" + data[i]._id + "'>" + "add note" + "</button>"  +  "</p>");
 
-    $("#articles").append("<p>" + "notes:" + "</p>");
+
+    if( data[i].notes.length > 0 ) {
+      $("#articles").append("<hr>");
+
+    }
 
     //tab this if you have time.
     for (var j = 0; j < data[i].notes.length; j++) {
-      $("#articles").append("<strong>" + data[i].notes[j].title + "</strong></br>");
-      $("#articles").append("<p>" + data[i].notes[j].body + "</p>");
+
+      $("#articles").append("<h3>note : " + data[i].notes[j].title + " </h3");
+      $("#articles").append("<p" + "note-id='" + data[i].notes[j]._id + "'>" + data[i].notes[j].body + "</p>");
       $("#articles").append("<button id='removenote' type='button'" + "note-id='" + data[i].notes[j]._id + "'>" + "remove note" + "</button><br/>");
+      
     }
-
-
     
-    
+
+    $("#articles").append("<hr>")
   }
+});
+
+
+$(document).on("click", "#scrape", function() {
+
+  $.ajax({
+    method: "GET",
+    url: "/scrape/"
+  })
+  .done(function(data) {
+
+      window.location.reload(true); 
+  });
+
+
 });
 
 
 $(document).on("click", "#removenote", function() {
   var noteId = $(this).attr("note-id");
+
 
   $.ajax({
     method: "GET",
@@ -33,6 +55,9 @@ $(document).on("click", "#removenote", function() {
       console.log(data);
       //page refresh later
     });
+
+  window.location.reload(true);
+
 
 });
 
@@ -92,6 +117,7 @@ $(document).on("click", "#savenote", function() {
       console.log(data);
       // Empty the notes section
       $("#notes").empty();
+      window.location.reload(true); 
     });
 
   // Also, remove the values entered in the input and textarea for note entry
